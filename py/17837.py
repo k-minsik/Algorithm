@@ -49,7 +49,7 @@ def solve(i):
 
     if len(move[ny][nx])>= 4:
          return True
-    
+
     return False
 
 cnt = 0
