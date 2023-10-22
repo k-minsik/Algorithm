@@ -32,7 +32,6 @@ for _ in range(tc):
 
     ret = 1
     for k, v in item.items():
-        print(k, v)
         ret *= v
     
     print(ret - 1) # 다안입는거 1 빼기
