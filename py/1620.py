@@ -35,4 +35,4 @@ for _ in range(m):
     if quiz.isdigit():
         print(pokemonArray[int(quiz)])
     else:
-        print(pokemonDict(quiz))
+        print(pokemonDict[quiz])
