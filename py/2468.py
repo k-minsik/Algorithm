@@ -71,7 +71,7 @@ graph = []
 for _ in range(n):
     row = list(map(int, input().split()))
     graph.append(row)
-    low = min(low, min(row))
+    low = min(low, min(row)) - 1
     high = max(high, max(row))
 
 answer = 0 
