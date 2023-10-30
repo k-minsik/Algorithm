@@ -68,4 +68,5 @@ while stack:
     for child in graph[now]:
         stack.append(child)
 
+print(tree, graph)
 print(answer)
