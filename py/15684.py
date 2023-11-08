@@ -1,45 +1,65 @@
 import sys
+from itertools import combinations
 input = sys.stdin.readline
-ret = 1e9
 
-n, m, h = map(int, input().split())
-arr = [[0 for _ in range(n)] for _ in range(h)]
+c, k, r = map(int, input().split())
+graph = [[0] * c for _ in range(r)]
+visited = [[0] * c for _ in range(r)]
+ladders = []
+ladder = []
 
-for _ in range(m):
-    y, x = map(int, input().split())
-    y, x = y-1, x-1
-    arr[y][x] = 1
-    arr[y][x+1] = -1
+for _ in range(k):
+    a, b = map(int, input().split())
+    graph[a-1][b-1] = 1
+    graph[a-1][b] = -1
 
-def check():
-    for start in range(n):
-        s = start
-        for step in range(h):
-            if arr[step][s] == 1:
-                s += 1
-            elif arr[step][s] == -1:
-                s -= 1
-        if s != start:
+for y in range(r):
+    for x in range(c - 1):
+        if graph[y][x] == 0 and graph[y][x+1] == 0:
+            ladders.append([y, x])
+
+def initGame():
+    while ladder:
+        a, b = ladder.pop()
+        graph[a][b] = 0
+        graph[a][b + 1] = 0
+
+
+def startGame():
+    for i in range(c):
+        x = i
+        for step in range(r):
+            if graph[step][x] == 1:
+                x += 1
+            elif graph[step][x] == -1:
+                x -= 1
+        if x != i:
             return False
     return True
 
-def do(now, cnt):
-    global ret
-    if cnt > 3 or cnt >= ret:
-        return
-    if check() == True:
-        ret = min(ret, cnt)
-        return
+
+def setGame(cnt):
+    for ladderr in combinations(ladders, cnt):
+        for a, b in ladderr:
+            graph[a][b] = 1
+            graph[a][b + 1] = -1
+            ladder.append([a, b])
+
+        if startGame():
+            return True
         
-    for i in range(now, h):
-        for j in range(n-1):
-            if arr[i][j] == 0 and arr[i][j+1] == 0:
-                arr[i][j] = 1
-                arr[i][j+1] = -1
-                do(i, cnt + 1)
-                arr[i][j] = 0
-                arr[i][j+1] = 0
+        initGame()
+        
+    return False
 
-do(0, 0)
+cnt = 0
+while True:
+    if cnt > 3:
+        print(-1)
+        break
 
-print(ret) if ret <= 3 else print(-1)
+    if setGame(cnt):
+        print(cnt)
+        break
+
+    cnt += 1
