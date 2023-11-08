@@ -1,16 +1,55 @@
 import sys
-from itertools import combinations
 input = sys.stdin.readline
 
 n = int(input())
-man = [0] + list(map(int, input().split()))
-arr = [[0 for _ in range(n+1)] for _ in range(n+1)]
+people = list(map(int, input().split()))
+graph = [[0] * n for _ in range(n)]
+for a in range(n):
+    relation = list(map(int, input().split()))
+    for b in relation[1:]:
+        b -= 1
+        graph[a][b] = 1
+        graph[b][a] = 1
 
-for i in range(1, n+1):
-    temp = list(map(int, input().split()))
+def check(group):
+    if not group:
+        return False
     
-    for j in range(1, temp[0]+1):
-        arr[i][temp[j]] = 1
+    stack = [group[0]]
+    visited[stack[0]] = 1
+    while stack:
+        a = stack.pop()
+        for b in range(n):
+            if graph[a][b]:
+                if b in group and not visited[b]:
+                    visited[b] = 1
+                    stack.append(b)
 
-for i in range(1, n):
-    for comb in combinations(range(1, n+1), )
+    for i in group:
+        if not visited[i]:
+            return False
+    
+    return True
+
+def sumPeople(group):
+    ret = 0
+    for a in group:
+        ret += people[a]
+    return ret
+
+
+answer = int(1e9)
+for i in range(1, 1 << n):
+    visited = [0] * n
+    groupA = []
+    groupB = []
+    for j in range(n):
+        if i & (1 << j):
+            groupA.append(j)
+        else:
+            groupB.append(j)
+    
+    if check(groupA) and check(groupB):
+        answer = min(answer, abs(sumPeople(groupA) - sumPeople(groupB)))
+
+print(answer) if answer != int(1e9) else print(-1)
