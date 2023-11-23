@@ -2,213 +2,127 @@ import sys
 from copy import deepcopy
 input = sys.stdin.readline
 
-n, m = map(int, input().split())
-graph = [list(map(int, input().split())) for _ in range(n)]
-cctv = [[0, 1, 2, 3], [0, 1], [0, 1, 2, 3], [0, 1, 2, 3]]
+def scan(idx, dir):
+    rollback = []
+    y, x = cctv[idx]
+
+    if graph[y][x] == 1:
+        ny, nx = y, x
+        while True:
+            ny += dy[dir]
+            nx += dx[dir]
+
+            if 0 <= ny < r and 0 <= nx < c and graph[ny][nx] != 6:
+                if graph[ny][nx] == 0:
+                    graph[ny][nx] = -1
+                    rollback.append([ny, nx])
+            
+            else:
+                break
+
+    elif graph[y][x] == 2:
+        for i in range(2):
+            ny, nx = y, x
+
+            while True:
+                ny += dy[(dir + i * 2) % 4]
+                nx += dx[(dir + i * 2) % 4]
+
+                if 0 <= ny < r and 0 <= nx < c and graph[ny][nx] != 6:
+                    if graph[ny][nx] == 0:
+                        graph[ny][nx] = -1
+                        rollback.append([ny, nx])
+                
+                else:
+                    break
+
+    elif graph[y][x] == 3:
+        for i in range(2):
+            ny, nx = y, x
+
+            while True:
+                ny += dy[(dir + i) % 4]
+                nx += dx[(dir + i) % 4]
+
+                if 0 <= ny < r and 0 <= nx < c and graph[ny][nx] != 6:
+                    if graph[ny][nx] == 0:
+                        graph[ny][nx] = -1
+                        rollback.append([ny, nx])
+                
+                else:
+                    break
+
+    elif graph[y][x] == 4:
+        for i in range(3):
+            ny, nx = y, x
+
+            while True:
+                ny += dy[(dir + i) % 4]
+                nx += dx[(dir + i) % 4]
+
+                if 0 <= ny < r and 0 <= nx < c and graph[ny][nx] != 6:
+                    if graph[ny][nx] == 0:
+                        graph[ny][nx] = -1
+                        rollback.append([ny, nx])
+                
+                else:
+                    break
+
+    elif graph[y][x] == 5:
+        for i in range(4):
+            ny, nx = y, x
+
+            while True:
+                ny += dy[(dir + i) % 4]
+                nx += dx[(dir + i) % 4]
+
+                if 0 <= ny < r and 0 <= nx < c and graph[ny][nx] != 6:
+                    if graph[ny][nx] == 0:
+                        graph[ny][nx] = -1
+                        rollback.append([ny, nx])
+                
+                else:
+                    break
+
+    return rollback
 
 
-answer = n * m
-for a in cctv[0]:
-    for b in cctv[1]:
-        for c in cctv[2]:
-            for d in cctv[3]:
+def dfs(lv):
+    global answer
 
-                arr = deepcopy(graph)
-                for y in range(n):
-                    for x in range(m):
+    if lv == len(cctv):
+        tempAnswer = 0
+        for i in range(r):
+            for j in range(c):
+                if graph[i][j] == 0:
+                    tempAnswer += 1
+        
+        answer = min(answer, tempAnswer)
+        return 
+    
+    for i in range(4):
+        rollback = scan(lv, i)
+        dfs(lv + 1)
 
-                        if arr[y][x] == 1:
-                            if a == 0:
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
-                            elif a == 1:
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
-                            elif a == 2:
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                            elif a == 3:
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-
-                        elif arr[y][x] == 2:
-                            if b == 0:
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                            elif b == 1:
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-
-                        elif arr[y][x] == 3:
-                            if c == 0:
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
-                            elif c == 1:
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                            elif c == 2:
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-                            
-                            elif c == 3:
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
+        for y, x in rollback:
+            graph[y][x] = 0
+    
 
 
-                        elif arr[y][x] == 4:
-                            if d == 0:
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                            elif d == 1:
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                            elif d == 2:
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-                                for t in range(y + 1, n):
-                                    if arr[t][x] != 6:
-                                        arr[t][x] = "#"
-                                    else:
-                                        break
-                            elif d == 3:
-                                for t in range(1, y + 1):
-                                    if arr[y - t][x] != 6:
-                                        arr[y - t][x] = "#"
-                                    else:
-                                        break
-                                for t in range(1, x + 1):
-                                    if arr[y][x - t] != 6:
-                                        arr[y][x - t] = "#"
-                                    else:
-                                        break
-                                for t in range(x + 1, m):
-                                    if arr[y][t] != 6:
-                                        arr[y][t] = "#"
-                                    else:
-                                        break
+if __name__ == "__main__":
 
-                        elif arr[y][x] == 5:
-                            for t in range(1, y + 1):
-                                if arr[y - t][x] != 6:
-                                    arr[y - t][x] = "#"
-                                else:
-                                    break
-                            for t in range(1, x + 1):
-                                if arr[y][x - t] != 6:
-                                    arr[y][x - t] = "#"
-                                else:
-                                    break
-                            for t in range(x + 1, m):
-                                if arr[y][t] != 6:
-                                    arr[y][t] = "#"
-                                else:
-                                    break
-                            for t in range(y + 1, n):
-                                if arr[t][x] != 6:
-                                    arr[t][x] = "#"
-                                else:
-                                    break
+    dy = [-1, 0, 1, 0]
+    dx = [0, 1, 0, -1]
 
-                temp = n * m 
-                for i in range(n):
-                    for j in range(m):
-                        if arr[i][j] in ["#", 1, 2, 3, 4, 5, 6]:
-                            temp -= 1
+    r, c = map(int, input().split())
+    graph = [list(map(int, input().split())) for _ in range(r)] 
+    cctv = []
+    answer = 64
 
-                answer = min(answer, temp)
+    for y in range(r):
+        for x in range(c):
+            if 1 <= graph[y][x] <= 5:
+                cctv.append([y, x])
 
-print(answer)
+    dfs(0)
+    print(answer)
