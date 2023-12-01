@@ -1,28 +1,66 @@
 import sys
 input = sys.stdin.readline
 
-dy = [-1, 1, 0, 0]
-dx = [0, 0, 1, -1]
+dy = [0, -1, 1, 0, 0]
+dx = [0, 0, 0, 1, -1]
 
-r, c, m = map(int, input().split())
-graph = [[0 for _ in range(c)] for _ in range(r)]
+R, C, M = map(int, input().split())
+graph = [[0] * (C + 1) for _ in range(R + 1)]
+sharks = [[]]
 
-sharks = {}
-for i in range(1, m + 1):
-    y, x, v, d, lv = map(int, input().split())
-    sharks[i] = [r, c, v, d, lv]
-    graph[y][x] = i
+def move(r, c, s, d):
+    nr, nc = r, c
+
+    for _ in range(s):
+        nr += dy[d]
+        nc += dx[d]
+
+        if nr < 1 or nr > R or nc < 1 or nc > C:
+            if d == 1:
+                d = 2
+            elif d == 2:
+                d = 1
+            elif d == 3:
+                d = 4
+            elif d == 4:
+                d = 3
+
+            nr += dy[d] * 2
+            nc += dx[d] * 2
+
+    return nr, nc, d
+
+
+for i in range(1, M + 1):
+    r, c, s, d, z = map(int, input().split())
+    graph[r][c] = i
+    sharks.append([i, r, c, s, d, z])
 
 answer = 0
-now = 0
-while now < c:
-    for i in range(r):
-        if graph[i][now] != 0:
-            shark = graph[i][now]
-            answer += sharks[shark][4]
-            sharks.pop(shark)
+for x in range(1, C + 1):
+    for y in range(1, R + 1):
+        if graph[y][x]:
+            answer += sharks[graph[y][x]][5]
+            sharks[graph[y][x]] = []
+            graph[y][x] = 0
             break
 
-    for k, v in sharks.items():
+    newGraph = [[0] * (C + 1) for _ in range(R + 1)]
+    for shark in sharks[1:]:
+        if shark == []:
+            continue
 
+        i, r, c, s, d, z = shark
+        nr, nc, nd = move(r, c, s, d)
 
+        if not newGraph[nr][nc] or sharks[newGraph[nr][nc]][5] < z:
+                sharks[newGraph[nr][nc]] = []
+                newGraph[nr][nc] = i
+                sharks[i] = [i, nr, nc, s, nd, z]
+            
+        else:
+            sharks[i] = []
+
+    graph = newGraph
+
+print(answer)
