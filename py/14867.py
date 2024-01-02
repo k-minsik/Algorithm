@@ -2,31 +2,39 @@ import sys
 from collections import deque
 input = sys.stdin.readline
 
-def bfs(a, b, c, d):
-    m = {}
-    dq = deque()
-
-    def enqueue(x, y, depth):
-        if (x, y) in m:
-            return
-        m[(x, y)] = depth + 1
-        dq.append((x, y))
-
-    m[(0, 0)] = 1
-    dq.append((0, 0))
-
-    while dq:
-        x, y = dq.popleft()
-
-        enqueue(a, y, m[(x, y)])
-        enqueue(x, b, m[(x, y)])
-        enqueue(0, y, m[(x, y)])
-        enqueue(x, 0, m[(x, y)])
-        enqueue(min(x + y, a), max(0, x + y - a), m[(x, y)])
-        enqueue(max(0, x + y - b), min(x + y, b), m[(x, y)])
-
-    return m.get((c, d), -1) - 1
-
 a, b, c, d = map(int, input().split())
-answer = bfs(a, b, c, d)
-print(answer if answer >= 0 else -1)
+memo = {}
+dq = deque([[0, 0, 0]])
+
+answer = -1
+while dq:
+    nx, ny, count = dq.popleft()
+
+    if nx == c and ny == d:
+        answer = count
+        break
+
+    if (nx, ny) in memo:
+        continue
+
+    memo[(nx, ny)] = count
+
+    # X에 물을 가득 채운다
+    dq.append([a, ny, count + 1])
+    dq.append([nx, b, count + 1])
+
+    # X의 물을 모두 버린다
+    dq.append([0, ny, count + 1])
+    dq.append([nx, 0, count + 1])
+
+    # X의 물을 Y에 붓는다
+    if nx + ny < a:
+        dq.append([nx + ny, 0, count + 1])
+    else:
+        dq.append([a, nx + ny - a, count + 1])
+    if nx + ny < b:
+        dq.append([0, nx + ny, count + 1])
+    else:
+        dq.append([nx + ny - b, b, count + 1])
+
+print(answer)
