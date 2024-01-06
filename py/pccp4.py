@@ -114,4 +114,4 @@ def solution(graph):
     else:
         return 0
     
-print(solution([[1, 0, 2], [0, 0, 0], [5, 0 ,5], [4, 0, 3]])) # 7
+print(solution([[1, 0, 2], [0, 0, 0], [5, 0 ,5], [4, 0, 3]]))
