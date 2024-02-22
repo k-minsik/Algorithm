@@ -15,9 +15,6 @@ for o in order:
         graph[o[i]].append(o[i + 1])
         degree[o[i + 1]] += 1
 
-for g in graph:
-    print(g)
-
 for i in range(1, n + 1):
     if degree[i] == 0:
         dq.append(i)
